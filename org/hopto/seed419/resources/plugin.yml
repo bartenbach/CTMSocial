@@ -1,0 +1,14 @@
+name: SuperHostileSocial
+main: org.hopto.seed419.SuperHostileSocial
+author: seed419
+version: 0.0.1
+description: Announces when a player finds colored wool in a chest
+commands:
+  shs:
+    description: Main Menu
+    aliases: [SuperHostileSocial, superhostile]
+permissions:
+  sha.*:
+    description: Gives access to all SHS commands
+    children:
+      sha.world: true
