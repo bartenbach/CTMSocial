@@ -101,7 +101,7 @@ public class CTMSocial extends JavaPlugin {
     }
 
     public boolean hasPerms(CommandSender sender) {
-        return (sender.hasPermission("shs.*") || sender.isOp());
+        return (sender.hasPermission("ctm.*") || sender.isOp());
     }
 
     public void sendPermissionsMessage(CommandSender sender) {
