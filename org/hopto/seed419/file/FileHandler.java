@@ -1,6 +1,6 @@
 package org.hopto.seed419.file;
 
-import org.hopto.seed419.SuperHostileSocial;
+import org.hopto.seed419.CTMSocial;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -33,13 +33,13 @@ import java.util.logging.Logger;
 public class FileHandler {
 
 
-    private SuperHostileSocial shwa;
+    private CTMSocial shwa;
     private File woolsFound;
     private File woolsPlaced;
     private Logger log = Logger.getLogger("SHA");
 
 
-    public FileHandler(SuperHostileSocial shwa) {
+    public FileHandler(CTMSocial shwa) {
         this.shwa = shwa;
     }
 
@@ -140,5 +140,13 @@ public class FileHandler {
            ex.printStackTrace();
        }
        return null;
+   }
+
+    public boolean resetWorld(String world) {
+        File file = verifyFileExists(world, "/BlocksPlaced.txt");
+        File file2 = verifyFileExists(world, "/BlocksFound.txt");
+        boolean delete1 = file.delete();
+        boolean delete2 = file2.delete();
+        return (delete1 && delete2);
     }
 }

@@ -7,9 +7,8 @@ import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.hopto.seed419.CTMSocial;
 import org.hopto.seed419.Format;
-import org.hopto.seed419.SuperHostileSocial;
-import org.hopto.seed419.file.Config;
 import org.hopto.seed419.file.FileHandler;
 
 import java.util.logging.Logger;
@@ -41,13 +40,13 @@ import java.util.logging.Logger;
 public class VictoryPlaceListener implements Listener {
 
 
-    private SuperHostileSocial shs;
+    private CTMSocial shs;
     private FileHandler fh;
     private Logger log = Logger.getLogger("SHS");
     private String fileName = "/BlocksPlaced.txt";
 
 
-    public VictoryPlaceListener(SuperHostileSocial shs, FileHandler fh) {
+    public VictoryPlaceListener(CTMSocial shs, FileHandler fh) {
         this.shs = shs;
         this.fh = fh;
     }
@@ -71,11 +70,6 @@ public class VictoryPlaceListener implements Listener {
             for (String x : text) {
                 if (!x.isEmpty()) {
                     line = x;
-                    /*Debugging*/
-                    if (shs.getConfig().getBoolean(Config.debug)) {
-                        System.out.println(line);
-                        System.out.println(Format.getBlockName(event.getItemInHand()));
-                    }
                     if (line.trim().equals(Format.getBlockName(event.getItemInHand()))) {
                          if (!fh.woolAlreadyInFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()), event.getPlayer().getName())) {
                              shs.getServer().broadcastMessage(event.getPlayer().getDisplayName() + ChatColor.GRAY + " placed " +

@@ -1,14 +1,13 @@
-name: SuperHostileSocial
-main: org.hopto.seed419.SuperHostileSocial
+name: CTMSocial
+main: org.hopto.seed419.CTMSocial
 author: seed419
 version: 0.0.1
-description: Announces when a player finds colored wool in a chest
+description: Makes CTM games more social
 commands:
-  shs:
+  ctm:
     description: Main Menu
-    aliases: [SuperHostileSocial, superhostile]
+  vm:
+    description: Shows blocks on the Victory monument
 permissions:
-  sha.*:
+  ctm.*:
     description: Gives access to all SHS commands
-    children:
-      sha.world: true

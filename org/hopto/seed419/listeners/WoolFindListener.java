@@ -9,8 +9,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.hopto.seed419.CTMSocial;
 import org.hopto.seed419.Format;
-import org.hopto.seed419.SuperHostileSocial;
 import org.hopto.seed419.file.FileHandler;
 
 import java.util.logging.Logger;
@@ -42,14 +42,14 @@ import java.util.logging.Logger;
 public class WoolFindListener implements Listener {
 
 
-    private SuperHostileSocial shs;
+    private CTMSocial shs;
     private FileHandler fh;
     private Logger log = Logger.getLogger("SHS");
     private String fileName = "/BlocksFound.txt";
     private String woolGet= ChatColor.GOLD + "[" + ChatColor.YELLOW + "WOOL GET!" + ChatColor.GOLD + "] ";
 
 
-    public WoolFindListener(SuperHostileSocial shs, FileHandler fh) {
+    public WoolFindListener(CTMSocial shs, FileHandler fh) {
         this.shs = shs;
         this.fh = fh;
     }

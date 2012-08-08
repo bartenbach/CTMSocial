@@ -8,7 +8,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.hopto.seed419.file.Config;
 import org.hopto.seed419.file.FileHandler;
-import org.hopto.seed419.listeners.BookListener;
 import org.hopto.seed419.listeners.VictoryPlaceListener;
 import org.hopto.seed419.listeners.WoolFindListener;
 
@@ -38,7 +37,7 @@ import java.util.List;
  *
  * @license AOL v.a3 <http://aol.nexua.org>
  */
-public class SuperHostileSocial extends JavaPlugin {
+public class CTMSocial extends JavaPlugin {
 
 
     private final FileHandler fh = new FileHandler(this);
@@ -59,14 +58,16 @@ public class SuperHostileSocial extends JavaPlugin {
         if (this.getConfig().getBoolean(Config.announceWoolFinds)) {
             pm.registerEvents(new WoolFindListener(this, fh), this);
         }
+/*
+        No book api yet.
         if (this.getConfig().getBoolean(Config.announceBookFinds)) {
             pm.registerEvents(new BookListener(this, fh), this);
-        }
+        }*/
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (label.equalsIgnoreCase("shs")) {
+        if (label.equalsIgnoreCase("ctm")) {
             if (args.length == 0) {
                 Menu.showMenu(sender);
             } else  {
@@ -78,13 +79,13 @@ public class SuperHostileSocial extends JavaPlugin {
                         sendPermissionsMessage(sender);
                     }
                     return true;
-                } else if (arg.equalsIgnoreCase("vm")) {
-                    if (sender instanceof Player) {
-                        menu.handleVMList((Player)sender);
-                    } else {
-                        sender.sendMessage("You must be a player to view the VM list");
-                    }
                 }
+            }
+        } else if (label.equalsIgnoreCase("vm")) {
+            if (sender instanceof Player) {
+                menu.handleVMList((Player)sender);
+            } else {
+                sender.sendMessage("You must be a player to view the VM list");
             }
         }
         return false;

@@ -37,26 +37,27 @@ import java.util.List;
 public class Menu {
 
 
-    private static final String prefix = ChatColor.GOLD + "[Super Hostile Social]";
-    private SuperHostileSocial shs;
+    private static final String prefix = ChatColor.GOLD + "[CTM Social]";
+    private CTMSocial shs;
     private FileHandler fh;
 
 
-    public Menu(SuperHostileSocial shs, FileHandler fh) {
+    public Menu(CTMSocial shs, FileHandler fh) {
         this.shs = shs;
         this.fh = fh;
     }
 
     public static void showMenu(CommandSender sender) {
         sender.sendMessage(prefix + ChatColor.GREEN + " [Commands]");
-        sender.sendMessage("    " + ChatColor.RED + "world {add, remove, list}");
+        sender.sendMessage("    " + ChatColor.RED + "world {enable, disable, reset, list}");
         sender.sendMessage("    " + ChatColor.RED + "vm");
     }
 
     public static void showWorldMenu(CommandSender sender) {
         sender.sendMessage(prefix + ChatColor.GREEN + " [Commands]");
-        sender.sendMessage("    " + ChatColor.RED + "world add [worldname]");
-        sender.sendMessage("    " + ChatColor.RED + "world remove [worldname]");
+        sender.sendMessage("    " + ChatColor.RED + "world enable [worldname]");
+        sender.sendMessage("    " + ChatColor.RED + "world disable [worldname]");
+        sender.sendMessage("    " + ChatColor.RED + "world reset [worldname]");
         sender.sendMessage("    " + ChatColor.RED + "world list");
     }
 
@@ -66,19 +67,19 @@ public class Menu {
         } else {
             String arg = args[1];
 
-            if (arg.equalsIgnoreCase("add")) {
+            if (arg.equalsIgnoreCase("enable")) {
                 if (args.length >= 3) {
                     for (World x : shs.getServer().getWorlds()) {
-                        if (x.getName().equals(args[2])) {
+                        if (x.getName().equals(getArgs(args))) {
                             List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
                             if (worlds.contains(args[2])) {
-                                sender.sendMessage(ChatColor.RED + args[2] + " is already added as a Super Hostile world!");
+                                sender.sendMessage(ChatColor.RED + args[2] + " is already added as a CTM world!");
                                 return;
                             }
                             worlds.add(x.getName());
                             shs.getConfig().set(Config.enabledWorlds, worlds);
                             fh.addWorld(x.getName());
-                            sender.sendMessage(ChatColor.GREEN + args[2] + " is now added as a Super Hostile world!");
+                            sender.sendMessage(ChatColor.GREEN + args[2] + " is now enabled as a CTM world");
                             shs.saveConfig();
                             return;
                         }
@@ -90,14 +91,36 @@ public class Menu {
                 } else {
                     sender.sendMessage(ChatColor.RED + "Please supply a world name");
                 }
-            } else if (arg.equalsIgnoreCase("remove")) {
+            } else if (arg.equalsIgnoreCase("disable")) {
                 if (args.length >= 3) {
                     List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
-                    if (worlds.contains(args[2])) {
+                    if (worlds.contains(getArgs(args))) {
                         worlds.remove(args[2]);
-                        sender.sendMessage(ChatColor.GREEN + args[2] + " has been removed.");
+                        sender.sendMessage(ChatColor.GREEN + args[2] + " has been disabled.");
                     } else {
-                        sender.sendMessage(ChatColor.RED + args[2] + " isn't currently added as a Super Hostile world.");
+                        sender.sendMessage(ChatColor.RED + args[2] + " isn't currently enabled as a CTM world.");
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Please supply a world name");
+                }
+            } else if (arg.equalsIgnoreCase("reset")) {
+                if (args.length >= 3) {
+                   List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
+                    if (worlds.contains(getArgs(args))) {
+                        if (fh.resetWorld(getArgs(args))) {
+                            final CommandSender senderf = sender;
+                            final String theargs = getArgs(args);
+                            sender.sendMessage(ChatColor.DARK_RED + "Resetting wool found in chests...");
+                            sender.sendMessage(ChatColor.DARK_RED + "Resetting Victory Monument...");
+                            shs.getServer().getScheduler().scheduleAsyncDelayedTask(shs, new Runnable() {
+                                @Override
+                                public void run() {
+                                    senderf.sendMessage(ChatColor.GREEN + theargs + " has been reset.");
+                                }
+                            }, 20L);
+                        } else {
+                            sender.sendMessage(ChatColor.RED + getArgs(args) + " could not be reset.");
+                        }
                     }
                 } else {
                     sender.sendMessage(ChatColor.RED + "Please supply a world name");
@@ -105,7 +128,7 @@ public class Menu {
             } else if (arg.equalsIgnoreCase("list")) {
                 List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
                 if (worlds.isEmpty()) {
-                    sender.sendMessage(ChatColor.RED + "There currently aren't any Super Hostile Social worlds.");
+                    sender.sendMessage(ChatColor.RED + "There currently aren't any enabled CTM worlds.");
                 } else {
                     sender.sendMessage(Menu.getPrefix() + ChatColor.GREEN + " [Enabled Worlds]");
                     for (String x : worlds) {
@@ -123,19 +146,30 @@ public class Menu {
     public void handleVMList(Player player) {
         String world = player.getWorld().getName();
         if (shs.isEnabledWorld(world)) {
+            player.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + world + ChatColor.GOLD + "] " +
+                    ChatColor.GOLD + "[Victory Monument Status]");
             ArrayList<String> entries = fh.getBlocksOnVM(world);
             if (entries != null && entries.size() > 0) {
-                player.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + world + ChatColor.GOLD + "] " +
-                ChatColor.GOLD + "[Victory Monument Status]");
                 for (String x : entries) {
                     String[] split = x.split(":");
                     player.sendMessage(Format.getBlockColor(split[0]) + split[0] + ChatColor.GRAY + " found by "
                             + ChatColor.AQUA + ChatColor.ITALIC + split[1]);
                 }
             } else {
-                player.sendMessage(ChatColor.GOLD + "[Victory Monument Status]");
                 player.sendMessage(ChatColor.RED + "No blocks have been placed on the Victory Monument yet.");
             }
         }
+    }
+
+    public String getArgs(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        args[0] = "$";
+        args[1] = "$";
+        for (String x : args) {
+            if (!x.equals("$")) {
+                sb.append(x).append(" ");
+            }
+        }
+        return sb.toString().trim();
     }
 }

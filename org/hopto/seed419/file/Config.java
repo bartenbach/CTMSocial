@@ -25,9 +25,9 @@ package org.hopto.seed419.file;
  * @license AOL v.a3 <http://aol.nexua.org>
  */
 public class Config {
-    public static final String announceWoolFinds = "Super Hostile Social Configuration.Announce wool finds";
-    public static final String announceVMPlacement = "Super Hostile Social Configuration.Announce Victory Monument place";
-    public static final String announceBookFinds = "Super Hostile Social Configuration.Announce Book finds (Waking Up Map)";
-    public static final String enabledWorlds = "Super Hostile Social Configuration.Enabled Worlds";
-    public static final String debug = "Super Hostile Social Configuration.Debug";
+    public static final String announceWoolFinds = "CTM Social Configuration.Announce wool finds";
+    public static final String announceVMPlacement = "CTM Social Configuration.Announce Victory Monument place";
+    public static final String announceBookFinds = "CTM Social Configuration.Announce Book finds (Waking Up Map)";
+    public static final String enabledWorlds = "CTM Social Configuration.Enabled Worlds";
+    //public static final String debug = "CTM Social Configuration.Debug";
 }
