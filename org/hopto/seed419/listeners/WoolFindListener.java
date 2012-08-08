@@ -45,7 +45,7 @@ public class WoolFindListener implements Listener {
     private SuperHostileSocial shs;
     private FileHandler fh;
     private Logger log = Logger.getLogger("SHS");
-    private String fileName = "/.BlocksFound";
+    private String fileName = "/BlocksFound.txt";
     private String woolGet= ChatColor.GOLD + "[" + ChatColor.YELLOW + "WOOL GET!" + ChatColor.GOLD + "] ";
 
 
@@ -66,9 +66,9 @@ public class WoolFindListener implements Listener {
             for (ItemStack item : i) {
                 if (item != null && item.getType() == Material.WOOL) {
                     String woolName = Format.getBlockName(item);
-                    if (!fh.woolAlreadyInFile(fileName, player.getWorld().getName(), woolName)) {
+                    if (!fh.woolAlreadyInFile(fileName, player.getWorld().getName(), woolName, event.getPlayer().getName())) {
                         broadcastMessage(player, woolName, Format.getBlockColor(item));
-                        fh.appendWoolToFile(fileName, player.getWorld().getName(), woolName);
+                        fh.appendWoolToFile(fileName, player.getWorld().getName(), woolName, player.getName());
                     }
                 }
             }
@@ -79,6 +79,6 @@ public class WoolFindListener implements Listener {
     void broadcastMessage(Player player, String blockName, ChatColor color) {
         shs.getServer().broadcastMessage(woolGet);
         shs.getServer().broadcastMessage(player.getDisplayName() + ChatColor.GRAY
-                + " just found the " + color + blockName + "!");
+                + " found the " + color + blockName + "!");
     }
 }

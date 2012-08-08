@@ -61,14 +61,11 @@ public class BookListener implements Listener {
         if (event.getInventory().getType() != null && event.getInventory().getType() == InventoryType.CHEST) {
             Inventory i = event.getInventory();
             for (ItemStack item : i) {
-                if (item != null && item.getType() == Material.WRITTEN_BOOK && item.) {
+                if (item != null && item.getType() == Material.WRITTEN_BOOK) {
+                    //need to verify the title of the book, which currently isn't possible in bukkit :(
                 }
             }
 
         }
-    }
-
-    boolean isEnchanted(ItemStack item) {
-        switch (item.get)
     }
 }

@@ -144,4 +144,50 @@ public class Format {
         return null;
     }
 
+    public static ChatColor getBlockColor(String name) {
+        if (name.equalsIgnoreCase("White Wool")) {
+            return ChatColor.WHITE;
+        } else if (name.equalsIgnoreCase("Orange Wool")) {
+            return ChatColor.GOLD;
+        } else if (name.equalsIgnoreCase("Magenta Wool")) {
+            return ChatColor.DARK_PURPLE;
+        } else if (name.equalsIgnoreCase("Light Blue Wool")) {
+            return ChatColor.BLUE;
+        } else if (name.equalsIgnoreCase("Yellow Wool")) {
+            return ChatColor.YELLOW;
+        } else if (name.equalsIgnoreCase("Lime Wool")) {
+            return ChatColor.GREEN;
+        } else if (name.equalsIgnoreCase("Pink Wool")) {
+            return ChatColor.LIGHT_PURPLE;
+        } else if (name.equalsIgnoreCase("Gray Wool")) {
+            return ChatColor.DARK_GRAY;
+        } else if (name.equalsIgnoreCase("Light Gray Wool")) {
+            return ChatColor.GRAY;
+        } else if (name.equalsIgnoreCase("Cyan Wool")) {
+            return ChatColor.DARK_AQUA;
+        } else if (name.equalsIgnoreCase("Purple Wool")) {
+            return ChatColor.DARK_PURPLE;
+        } else if (name.equalsIgnoreCase("Blue Wool")) {
+            return ChatColor.DARK_BLUE;
+        } else if (name.equalsIgnoreCase("Brown Wool")) {
+            return ChatColor.DARK_GRAY;
+        } else if (name.equalsIgnoreCase("Green Wool")) {
+            return ChatColor.DARK_GREEN;
+        } else if (name.equalsIgnoreCase("Red Wool")) {
+            return ChatColor.RED;
+        } else if (name.equalsIgnoreCase("Black Wool")) {
+            return ChatColor.BLACK;
+        } else if (name.equalsIgnoreCase("Redstone Ore")) {
+            return ChatColor.DARK_RED;
+        } else if (name.equalsIgnoreCase("Gold Block")) {
+            return ChatColor.GOLD;
+        } else if (name.equalsIgnoreCase("Iron Block")) {
+            return ChatColor.GRAY;
+        } else if (name.equalsIgnoreCase("Diamond Block")) {
+            return ChatColor.AQUA;
+        } else {
+            return ChatColor.WHITE;
+        }
+    }
+
 }

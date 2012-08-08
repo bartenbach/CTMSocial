@@ -3,9 +3,11 @@ package org.hopto.seed419;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.hopto.seed419.file.Config;
 import org.hopto.seed419.file.FileHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,7 +49,8 @@ public class Menu {
 
     public static void showMenu(CommandSender sender) {
         sender.sendMessage(prefix + ChatColor.GREEN + " [Commands]");
-        sender.sendMessage("    " + ChatColor.RED + "world");
+        sender.sendMessage("    " + ChatColor.RED + "world {add, remove, list}");
+        sender.sendMessage("    " + ChatColor.RED + "vm");
     }
 
     public static void showWorldMenu(CommandSender sender) {
@@ -115,5 +118,24 @@ public class Menu {
 
     public static String getPrefix() {
         return prefix;
+    }
+
+    public void handleVMList(Player player) {
+        String world = player.getWorld().getName();
+        if (shs.isEnabledWorld(world)) {
+            ArrayList<String> entries = fh.getBlocksOnVM(world);
+            if (entries != null && entries.size() > 0) {
+                player.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + world + ChatColor.GOLD + "] " +
+                ChatColor.GOLD + "[Victory Monument Status]");
+                for (String x : entries) {
+                    String[] split = x.split(":");
+                    player.sendMessage(Format.getBlockColor(split[0]) + split[0] + ChatColor.GRAY + " found by "
+                            + ChatColor.AQUA + ChatColor.ITALIC + split[1]);
+                }
+            } else {
+                player.sendMessage(ChatColor.GOLD + "[Victory Monument Status]");
+                player.sendMessage(ChatColor.RED + "No blocks have been placed on the Victory Monument yet.");
+            }
+        }
     }
 }

@@ -1,7 +1,9 @@
 package org.hopto.seed419;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.hopto.seed419.file.Config;
@@ -64,14 +66,24 @@ public class SuperHostileSocial extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (label.equalsIgnoreCase("shs") && (sender.hasPermission("sha.*") || sender.isOp())) {
+        if (label.equalsIgnoreCase("shs")) {
             if (args.length == 0) {
                 Menu.showMenu(sender);
             } else  {
                 String arg = args[0];
                 if (arg.equalsIgnoreCase("world")) {
-                    menu.handleWorldMenu(sender, args);
+                    if (hasPerms(sender)) {
+                        menu.handleWorldMenu(sender, args);
+                    } else {
+                        sendPermissionsMessage(sender);
+                    }
                     return true;
+                } else if (arg.equalsIgnoreCase("vm")) {
+                    if (sender instanceof Player) {
+                        menu.handleVMList((Player)sender);
+                    } else {
+                        sender.sendMessage("You must be a player to view the VM list");
+                    }
                 }
             }
         }
@@ -85,5 +97,13 @@ public class SuperHostileSocial extends JavaPlugin {
             }
         }
         return false;
+    }
+
+    public boolean hasPerms(CommandSender sender) {
+        return (sender.hasPermission("shs.*") || sender.isOp());
+    }
+
+    public void sendPermissionsMessage(CommandSender sender) {
+        sender.sendMessage(ChatColor.RED + "You don't have sufficient permission.");
     }
 }

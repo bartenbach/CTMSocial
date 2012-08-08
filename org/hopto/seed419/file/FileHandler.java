@@ -57,8 +57,8 @@ public class FileHandler {
         if (!worldDir.exists()) {
             worldDir.mkdirs();
         }
-        woolsFound = new File(worldDir + "/.woolsFound");
-        woolsPlaced = new File(worldDir + "/.woolsPlaced");
+        woolsFound = new File(worldDir + "/BlocksFound.txt");
+        woolsPlaced = new File(worldDir + "/BlocksPlaced.txt");
         if (!woolsFound.exists()) {
             try {
                 woolsFound.createNewFile();
@@ -98,11 +98,11 @@ public class FileHandler {
 
     }
 
-    public void appendWoolToFile(String fileName, String world, String name) {
+    public void appendWoolToFile(String fileName, String world, String blockName, String playerName) {
         File file = verifyFileExists(world, fileName);
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-            pw.println(name);
+            pw.println(blockName + ":" + playerName);
             pw.flush();
             pw.close();
         } catch (IOException e) {
@@ -110,13 +110,13 @@ public class FileHandler {
         }
     }
 
-    public boolean woolAlreadyInFile(String fileName, String world, String name) {
+    public boolean woolAlreadyInFile(String fileName, String world, String name, String playerName) {
         File file = verifyFileExists(world, fileName);
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
-            String wool;
-            while ((wool = br.readLine()) != null) {
-                if (wool.equals(name)) {
+            String entry;
+            while ((entry = br.readLine()) != null) {
+                if (entry.split(":")[0].equals(name)) {
                     return true;
                 }
             }
@@ -124,5 +124,21 @@ public class FileHandler {
             ex.printStackTrace();
         }
         return false;
+    }
+
+   public ArrayList<String> getBlocksOnVM(String world) {
+       File file = verifyFileExists(world, "/BlocksPlaced.txt");
+       ArrayList<String> entries = new ArrayList<String>();
+       try {
+           BufferedReader br = new BufferedReader(new FileReader(file));
+           String entry;
+           while ((entry = br.readLine()) != null) {
+               entries.add(entry);
+           }
+           return entries;
+       } catch (IOException ex) {
+           ex.printStackTrace();
+       }
+       return null;
     }
 }

@@ -44,7 +44,7 @@ public class VictoryPlaceListener implements Listener {
     private SuperHostileSocial shs;
     private FileHandler fh;
     private Logger log = Logger.getLogger("SHS");
-    private String fileName = "/.BlocksPlaced";
+    private String fileName = "/BlocksPlaced.txt";
 
 
     public VictoryPlaceListener(SuperHostileSocial shs, FileHandler fh) {
@@ -77,11 +77,11 @@ public class VictoryPlaceListener implements Listener {
                         System.out.println(Format.getBlockName(event.getItemInHand()));
                     }
                     if (line.trim().equals(Format.getBlockName(event.getItemInHand()))) {
-                         if (!fh.woolAlreadyInFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()))) {
+                         if (!fh.woolAlreadyInFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()), event.getPlayer().getName())) {
                              shs.getServer().broadcastMessage(event.getPlayer().getDisplayName() + ChatColor.GRAY + " placed " +
                                      "the " + Format.getBlockColor(event.getItemInHand()) + Format.getBlockName(event.getItemInHand()) +
                                      ChatColor.GRAY + " on the Victory Monument!");
-                             fh.appendWoolToFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()));
+                             fh.appendWoolToFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()), event.getPlayer().getName());
                          }
                     }
                 }
