@@ -33,30 +33,31 @@ import java.util.logging.Logger;
 public class FileHandler {
 
 
-    private CTMSocial shwa;
+    private CTMSocial ctms;
     private File woolsFound;
     private File woolsPlaced;
-    private Logger log = Logger.getLogger("SHA");
+    private Logger log = Logger.getLogger("CTMS");
 
 
-    public FileHandler(CTMSocial shwa) {
-        this.shwa = shwa;
+    public FileHandler(CTMSocial ctms)  {
+        this.ctms = ctms;
     }
 
     public void checkFiles() {
         makeSureDirectoryExists();
-        shwa.getConfig().options().copyDefaults(true);
-        if (shwa.getConfig().getList(Config.enabledWorlds) == null) {
-            shwa.getConfig().set(Config.enabledWorlds, new ArrayList<String>());
+        ctms.getConfig().options().copyDefaults(true);
+        if (ctms.getConfig().getList(Config.enabledWorlds) == null) {
+            ctms.getConfig().set(Config.enabledWorlds, new ArrayList<String>());
         }
-        shwa.saveConfig();
+        ctms.saveConfig();
     }
 
     public void addWorld(String name) {
-        File worldDir = new File(shwa.getDataFolder() + "/" + name);
+        File worldDir = new File(ctms.getDataFolder() + "/" + name);
         if (!worldDir.exists()) {
             worldDir.mkdirs();
         }
+        //
         woolsFound = new File(worldDir + "/BlocksFound.txt");
         woolsPlaced = new File(worldDir + "/BlocksPlaced.txt");
         if (!woolsFound.exists()) {
@@ -76,14 +77,14 @@ public class FileHandler {
     }
 
     public void makeSureDirectoryExists() {
-        if (!shwa.getDataFolder().exists()) {
-            shwa.getDataFolder().mkdirs();
+        if (!ctms.getDataFolder().exists()) {
+            ctms.getDataFolder().mkdirs();
         }
     }
 
     public File verifyFileExists(String world, String fileName) {
         makeSureDirectoryExists();
-        File worldDir = new File(shwa.getDataFolder() + "/" + world);
+        File worldDir = new File(ctms.getDataFolder() + "/" + world);
         File file = new File(worldDir + fileName);
         if (!file.exists()) {
             try {

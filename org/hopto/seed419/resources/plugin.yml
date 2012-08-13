@@ -10,4 +10,4 @@ commands:
     description: Shows blocks on the Victory monument
 permissions:
   ctm.*:
-    description: Gives access to all SHS commands
+    description: Gives access to all CTMSocial commands
