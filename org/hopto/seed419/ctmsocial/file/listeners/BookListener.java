@@ -1,6 +1,5 @@
-package org.hopto.seed419.listeners;
+package org.hopto.seed419.ctmsocial.file.listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,8 +9,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.hopto.seed419.CTMSocial;
-import org.hopto.seed419.Format;
-import org.hopto.seed419.file.FileHandler;
+import org.hopto.seed419.ctmsocial.file.FileHandler;
 
 import java.util.logging.Logger;
 
@@ -39,20 +37,19 @@ import java.util.logging.Logger;
  *
  * @license AOL v.a3 <http://aol.nexua.org>
  */
-public class WoolFindListener implements Listener {
+public class BookListener implements Listener {
 
 
     private CTMSocial shs;
     private FileHandler fh;
     private Logger log = Logger.getLogger("SHS");
-    private String fileName = "/BlocksFound.txt";
-    private String woolGet= ChatColor.GOLD + "[" + ChatColor.YELLOW + "WOOL GET!" + ChatColor.GOLD + "] ";
 
 
-    public WoolFindListener(CTMSocial shs, FileHandler fh) {
+    public BookListener(CTMSocial shs, FileHandler fh) {
         this.shs = shs;
         this.fh = fh;
     }
+
 
     @EventHandler
     void onPlayerChest(InventoryOpenEvent event) {
@@ -64,21 +61,11 @@ public class WoolFindListener implements Listener {
         if (event.getInventory().getType() != null && event.getInventory().getType() == InventoryType.CHEST) {
             Inventory i = event.getInventory();
             for (ItemStack item : i) {
-                if (item != null && item.getType() == Material.WOOL) {
-                    String woolName = Format.getBlockName(item);
-                    if (!fh.woolAlreadyInFile(fileName, player.getWorld().getName(), woolName, event.getPlayer().getName())) {
-                        broadcastMessage(player, woolName, Format.getBlockColor(item));
-                        fh.appendWoolToFile(fileName, player.getWorld().getName(), woolName, player.getName());
-                    }
+                if (item != null && item.getType() == Material.WRITTEN_BOOK) {
+                    //need to verify the title of the book, which currently isn't possible in bukkit :(
                 }
             }
 
         }
-    }
-
-    void broadcastMessage(Player player, String blockName, ChatColor color) {
-        shs.getServer().broadcastMessage(woolGet);
-        shs.getServer().broadcastMessage(player.getDisplayName() + ChatColor.GRAY
-                + " found the " + color + blockName + "!");
     }
 }

@@ -1,4 +1,4 @@
-package org.hopto.seed419.file;
+package org.hopto.seed419.ctmsocial.file.file;
 
 /**
  * Attribute Only (Public) License

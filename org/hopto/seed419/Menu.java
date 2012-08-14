@@ -4,8 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.hopto.seed419.file.Config;
-import org.hopto.seed419.file.FileHandler;
+import org.hopto.seed419.ctmsocial.file.Config;
+import org.hopto.seed419.ctmsocial.file.FileHandler;
 
 import java.util.ArrayList;
 import java.util.List;

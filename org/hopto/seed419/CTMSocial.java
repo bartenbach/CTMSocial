@@ -6,10 +6,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.hopto.seed419.file.Config;
-import org.hopto.seed419.file.FileHandler;
-import org.hopto.seed419.listeners.VictoryPlaceListener;
-import org.hopto.seed419.listeners.WoolFindListener;
+import org.hopto.seed419.ctmsocial.file.Config;
+import org.hopto.seed419.ctmsocial.file.FileHandler;
+import org.hopto.seed419.ctmsocial.listeners.VictoryPlaceListener;
+import org.hopto.seed419.ctmsocial.listeners.WoolFindListener;
 
 import java.util.List;
 

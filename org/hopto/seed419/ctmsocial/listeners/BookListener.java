@@ -1,4 +1,4 @@
-package org.hopto.seed419.listeners;
+package org.hopto.seed419.ctmsocial.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -9,7 +9,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.hopto.seed419.CTMSocial;
-import org.hopto.seed419.file.FileHandler;
+import org.hopto.seed419.ctmsocial.file.FileHandler;
 
 import java.util.logging.Logger;
 

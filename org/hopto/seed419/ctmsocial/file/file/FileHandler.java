@@ -1,6 +1,7 @@
-package org.hopto.seed419.file;
+package org.hopto.seed419.ctmsocial.file.file;
 
 import org.hopto.seed419.CTMSocial;
+import org.hopto.seed419.ctmsocial.file.file.Config;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -57,7 +58,6 @@ public class FileHandler {
         if (!worldDir.exists()) {
             worldDir.mkdirs();
         }
-        //
         woolsFound = new File(worldDir + "/BlocksFound.txt");
         woolsPlaced = new File(worldDir + "/BlocksPlaced.txt");
         if (!woolsFound.exists()) {
