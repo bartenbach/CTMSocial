@@ -1,10 +1,14 @@
 package org.hopto.seed419.ctmsocial.file;
 
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.hopto.seed419.CTMSocial;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Attribute Only (Public) License
@@ -36,7 +40,6 @@ public class FileHandler {
     private CTMSocial ctms;
     private File woolsFound;
     private File woolsPlaced;
-    private Logger log = Logger.getLogger("CTMS");
 
 
     public FileHandler(CTMSocial ctms)  {
@@ -44,7 +47,7 @@ public class FileHandler {
     }
 
     public void checkFiles() {
-        makeSureDirectoryExists();
+        verifyDirectoryExists();
         ctms.getConfig().options().copyDefaults(true);
         if (ctms.getConfig().getList(Config.enabledWorlds) == null) {
             ctms.getConfig().set(Config.enabledWorlds, new ArrayList<String>());
@@ -75,14 +78,14 @@ public class FileHandler {
         }
     }
 
-    public void makeSureDirectoryExists() {
+    public void verifyDirectoryExists() {
         if (!ctms.getDataFolder().exists()) {
             ctms.getDataFolder().mkdirs();
         }
     }
 
     public File verifyFileExists(String world, String fileName) {
-        makeSureDirectoryExists();
+        verifyDirectoryExists();
         File worldDir = new File(ctms.getDataFolder() + "/" + world);
         File file = new File(worldDir + fileName);
         if (!file.exists()) {
@@ -90,7 +93,7 @@ public class FileHandler {
                 file.createNewFile();
                 return file;
             } catch (IOException e) {
-                log.severe("Can't create file!");
+                ctms.getLogger().severe("Can't create file!");
                 e.printStackTrace();
             }
         }
@@ -98,11 +101,23 @@ public class FileHandler {
 
     }
 
-    public void appendWoolToFile(String fileName, String world, String blockName, String playerName) {
+    public void appendWoolFindToFile(String fileName, String world, String blockName, String playerName) {
         File file = verifyFileExists(world, fileName);
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
             pw.println(blockName + ":" + playerName);
+            pw.flush();
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void appendVMPlaceToFile(String fileName, String world, String blockName, String playerName, Block block) {
+        File file = verifyFileExists(world, fileName);
+        try {
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+            pw.println(blockName + ":" + playerName + ":" + block.getX() + "," + block.getY() + "," + block.getZ());
             pw.flush();
             pw.close();
         } catch (IOException e) {
@@ -148,5 +163,23 @@ public class FileHandler {
         boolean delete1 = file.delete();
         boolean delete2 = file2.delete();
         return (delete1 && delete2);
+    }
+
+    public HashSet<Location> loadVMBlockLocations() {
+        HashSet<Location> locations = new HashSet<Location>();
+        File dir = ctms.getDataFolder();
+        List<World> worlds = ctms.getServer().getWorlds();
+        for (World w : worlds) {
+            System.out.println(w.getName());
+            if (ctms.getConfig().getList(Config.enabledWorlds).contains(w.getName())) {
+                for (String f : dir.list()) {
+                    System.out.println("Dirlist: f");
+                    if (f.equals(w.getName())) {
+                        System.out.println("match!" + f);
+                    }
+                }
+            }
+        }
+        return locations;
     }
 }

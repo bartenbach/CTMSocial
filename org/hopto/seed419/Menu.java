@@ -69,23 +69,24 @@ public class Menu {
 
             if (arg.equalsIgnoreCase("enable")) {
                 if (args.length >= 3) {
+                    String world = getArgs(args);
                     for (World x : shs.getServer().getWorlds()) {
-                        if (x.getName().equals(getArgs(args))) {
+                        if (x.getName().equals(world)) {
                             List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
-                            if (worlds.contains(args[2])) {
-                                sender.sendMessage(ChatColor.RED + args[2] + " is already added as a CTM world!");
+                            if (worlds.contains(world)) {
+                                sender.sendMessage(ChatColor.RED + world + " is already added as a CTM world!");
                                 return;
                             }
                             worlds.add(x.getName());
                             shs.getConfig().set(Config.enabledWorlds, worlds);
                             fh.addWorld(x.getName());
-                            sender.sendMessage(ChatColor.GREEN + args[2] + " is now enabled as a CTM world");
+                            sender.sendMessage(ChatColor.GREEN + world + " is now enabled as a CTM world");
                             shs.saveConfig();
                             return;
                         }
                     }
                     sender.sendMessage(Menu.getPrefix());
-                    sender.sendMessage(ChatColor.RED + args[2] + " is not a loaded world");
+                    sender.sendMessage(ChatColor.RED + world + " is not a loaded world");
                     sender.sendMessage(ChatColor.RED + "World names are case sensitive!");
                     return;
                 } else {

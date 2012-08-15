@@ -68,7 +68,7 @@ public class WoolFindListener implements Listener {
                     String woolName = Format.getBlockName(item);
                     if (!fh.woolAlreadyInFile(fileName, player.getWorld().getName(), woolName, event.getPlayer().getName())) {
                         broadcastMessage(player, woolName, Format.getBlockColor(item));
-                        fh.appendWoolToFile(fileName, player.getWorld().getName(), woolName, player.getName());
+                        fh.appendWoolFindToFile(fileName, player.getWorld().getName(), woolName, player.getName());
                     }
                 }
             }

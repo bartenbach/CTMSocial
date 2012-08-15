@@ -11,8 +11,6 @@ import org.hopto.seed419.CTMSocial;
 import org.hopto.seed419.Format;
 import org.hopto.seed419.ctmsocial.file.FileHandler;
 
-import java.util.logging.Logger;
-
 /**
  * Attribute Only (Public) License
  * Version 0.a3, July 11, 2011
@@ -42,7 +40,6 @@ public class VictoryPlaceListener implements Listener {
 
     private CTMSocial shs;
     private FileHandler fh;
-    private Logger log = Logger.getLogger("SHS");
     private String fileName = "/BlocksPlaced.txt";
 
 
@@ -75,7 +72,7 @@ public class VictoryPlaceListener implements Listener {
                              shs.getServer().broadcastMessage(event.getPlayer().getDisplayName() + ChatColor.GRAY + " placed " +
                                      "the " + Format.getBlockColor(event.getItemInHand()) + Format.getBlockName(event.getItemInHand()) +
                                      ChatColor.GRAY + " on the Victory Monument!");
-                             fh.appendWoolToFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()), event.getPlayer().getName());
+                             fh.appendVMPlaceToFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()), event.getPlayer().getName(), event.getBlock());
                          }
                     }
                 }

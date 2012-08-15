@@ -11,8 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.hopto.seed419.CTMSocial;
 import org.hopto.seed419.ctmsocial.file.FileHandler;
 
-import java.util.logging.Logger;
-
 /**
  * Attribute Only (Public) License
  * Version 0.a3, July 11, 2011
@@ -42,7 +40,6 @@ public class BookListener implements Listener {
 
     private CTMSocial shs;
     private FileHandler fh;
-    private Logger log = Logger.getLogger("SHS");
 
 
     public BookListener(CTMSocial shs, FileHandler fh) {

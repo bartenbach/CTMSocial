@@ -1,6 +1,7 @@
 package org.hopto.seed419;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,9 +9,11 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.hopto.seed419.ctmsocial.file.Config;
 import org.hopto.seed419.ctmsocial.file.FileHandler;
+import org.hopto.seed419.ctmsocial.listeners.VMBreakListener;
 import org.hopto.seed419.ctmsocial.listeners.VictoryPlaceListener;
 import org.hopto.seed419.ctmsocial.listeners.WoolFindListener;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -41,12 +44,15 @@ public class CTMSocial extends JavaPlugin {
 
 
     private final FileHandler fh = new FileHandler(this);
+    private final VMBreakListener vmb = new VMBreakListener(this);
     private final Menu menu = new Menu(this, fh);
+    private static HashSet<Location> vmBlocks;
 
 
     @Override
     public void onEnable() {
         fh.checkFiles();
+        vmBlocks = fh.loadVMBlockLocations();
         registerEnabledListeners();
     }
 
@@ -58,6 +64,7 @@ public class CTMSocial extends JavaPlugin {
         if (this.getConfig().getBoolean(Config.announceWoolFinds)) {
             pm.registerEvents(new WoolFindListener(this, fh), this);
         }
+        pm.registerEvents(vmb, this);
 /*
         No book api yet.
         if (this.getConfig().getBoolean(Config.announceBookFinds)) {
@@ -106,5 +113,9 @@ public class CTMSocial extends JavaPlugin {
 
     public void sendPermissionsMessage(CommandSender sender) {
         sender.sendMessage(ChatColor.RED + "You don't have sufficient permission.");
+    }
+
+    public HashSet<Location> getVmBlocks() {
+        return vmBlocks;
     }
 }
