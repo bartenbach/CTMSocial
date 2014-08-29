@@ -1,5 +1,6 @@
 package co.proxa.ctmsocial.handler;
 
+import co.proxa.ctmsocial.util.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,14 +31,23 @@ public class CommandHandler implements CommandExecutor{
         } else if (label.equalsIgnoreCase("vm")) {
             if (!(sender instanceof Player)) {
                 if (args.length >= 1) {
-                    MenuHandler.handleVMList(sender, args[0]);
+                    MenuHandler.handleVMList(sender, StringUtils.getArgsAll(args));
                 } else {
                     sender.sendMessage(ChatColor.RED + "Console Usage: " + ChatColor.GOLD + "/vm <worldname>");
                 }
             } else {
-                MenuHandler.handleVMList((Player)sender); //we don't really care
+                MenuHandler.handleVMList((Player)sender);
             }
-        }
+        } else if (label.equalsIgnoreCase("books")) {
+            if (!(sender instanceof Player)) {
+                if (args.length >= 1) {
+                    MenuHandler.handleBookList(sender, StringUtils.getArgsAll(args));
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Console Usage: " + ChatColor.GOLD + "/books <worldname>");
+                }
+            } else {
+                MenuHandler.handleBookList((Player) sender);
+            }        }
         return false;
     }
 

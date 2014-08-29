@@ -1,5 +1,9 @@
 package co.proxa.ctmsocial.listeners;
 
+import co.proxa.ctmsocial.CTMSocial;
+import co.proxa.ctmsocial.Format;
+import co.proxa.ctmsocial.file.FileHandler;
+import co.proxa.ctmsocial.handler.WorldHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -7,9 +11,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import co.proxa.ctmsocial.CTMSocial;
-import co.proxa.ctmsocial.Format;
-import co.proxa.ctmsocial.file.FileHandler;
 
 public class VictoryPlaceListener implements Listener {
 
@@ -26,7 +27,7 @@ public class VictoryPlaceListener implements Listener {
 
     @EventHandler
     void onPlayerWoolPlace(BlockPlaceEvent event) {
-        if (!shs.isEnabledWorld(event.getPlayer().getWorld().getName())) {
+        if (!WorldHandler.isEnabledWorld(event.getPlayer().getWorld().getName())) {
             return;
         }
 
@@ -44,7 +45,7 @@ public class VictoryPlaceListener implements Listener {
                 if (!x.isEmpty()) {
                     line = x;
                     if (line.trim().equals(Format.getBlockName(event.getItemInHand()))) {
-                         if (!fh.woolAlreadyInFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()), event.getPlayer().getName())) {
+                         if (!fh.blockAlreadyInFile(fileName, event.getPlayer().getWorld().getName(), Format.getBlockName(event.getItemInHand()), event.getPlayer().getName())) {
                              shs.getServer().broadcastMessage(event.getPlayer().getDisplayName() + ChatColor.GRAY + " placed " +
                                      "the " + Format.getBlockColor(event.getItemInHand()) + Format.getBlockName(event.getItemInHand()) +
                                      ChatColor.GRAY + " on the Victory Monument!");

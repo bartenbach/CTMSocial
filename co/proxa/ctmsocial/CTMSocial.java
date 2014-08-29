@@ -4,30 +4,24 @@ import co.proxa.ctmsocial.file.Config;
 import co.proxa.ctmsocial.file.FileHandler;
 import co.proxa.ctmsocial.handler.CommandHandler;
 import co.proxa.ctmsocial.handler.MenuHandler;
+import co.proxa.ctmsocial.handler.WorldHandler;
 import co.proxa.ctmsocial.listeners.BookListener;
 import co.proxa.ctmsocial.listeners.VictoryPlaceListener;
 import co.proxa.ctmsocial.listeners.WoolFindListener;
-import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.HashSet;
-import java.util.List;
 
 public class CTMSocial extends JavaPlugin {
 
     /* Changelog:
-     *  Wrote console functionality for /vm command
-     *  Fixed multiple holes in menu functionality
-     *  Implemented book listener for 'Waking Up' map
+     *  Fixed the new world delete command
+     *  Implemented books!
      */
-
 
     private final FileHandler fh = new FileHandler(this);
     private final MenuHandler menu = new MenuHandler(this, fh);
+    private final WorldHandler wh = new WorldHandler(this);
     private final CommandHandler ch = new CommandHandler();
-    private static HashSet<Location> vmBlocks;
-
 
     @Override
     public void onEnable() {
@@ -49,18 +43,7 @@ public class CTMSocial extends JavaPlugin {
         }
         this.getCommand("vm").setExecutor(ch);
         this.getCommand("ctm").setExecutor(ch);
+        this.getCommand("books").setExecutor(ch);
     }
 
-    public boolean isEnabledWorld(String worldName) {
-        for (String x : (List<String>) getConfig().getList(Config.enabledWorlds)) {
-            if (x.equals(worldName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public HashSet<Location> getVmBlocks() {
-        return vmBlocks;
-    }
 }

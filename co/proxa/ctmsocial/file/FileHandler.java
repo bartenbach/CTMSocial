@@ -1,6 +1,7 @@
 package co.proxa.ctmsocial.file;
 
 import co.proxa.ctmsocial.CTMSocial;
+import co.proxa.ctmsocial.handler.WorldHandler;
 import org.bukkit.block.Block;
 
 import java.io.*;
@@ -12,9 +13,9 @@ public class FileHandler {
 
 
     private CTMSocial ctms;
-    private final String blocksFoundFile = "/BlocksFound.txt";
-    private final String blocksPlacedFile = "/BlocksPlaced.txt";
-    private final String booksFoundFile = "/BooksFound.txt";
+    public final static String blocksFoundFile = "/BlocksFound.txt";
+    public final static String blocksPlacedFile = "/BlocksPlaced.txt";
+    public final static String booksFoundFile = "/BooksFound.txt";
 
 
     public FileHandler(CTMSocial ctms)  {
@@ -29,9 +30,6 @@ public class FileHandler {
         }
         ctms.saveConfig();
     }
-
-    // TODO no delete world?
-    // TODO book file management
 
     public void addWorld(String worldName) {
         File worldDir = new File(ctms.getDataFolder() + "/" + worldName);
@@ -97,7 +95,7 @@ public class FileHandler {
 
     }
 
-    public void appendWoolFindToFile(String fileName, String world, String blockName, String playerName) {
+    public void appendBlockFindToFile(String fileName, String world, String blockName, String playerName) {
         File file = verifyFileExists(world, fileName);
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
@@ -121,7 +119,7 @@ public class FileHandler {
         }
     }
 
-    public boolean woolAlreadyInFile(String fileName, String world, String name, String playerName) {
+    public boolean blockAlreadyInFile(String fileName, String world, String name, String playerName) {
         File file = verifyFileExists(world, fileName);
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -137,8 +135,8 @@ public class FileHandler {
         return false;
     }
 
-   public ArrayList<String> getBlocksOnVM(String world) {
-       File file = verifyFileExists(world, blocksPlacedFile);
+   public ArrayList<String> getBlockListFromFile(String world, String fileName) {
+       File file = verifyFileExists(world, fileName);
        ArrayList<String> entries = new ArrayList<String>();
        try {
            BufferedReader br = new BufferedReader(new FileReader(file));
@@ -153,57 +151,36 @@ public class FileHandler {
        return null;
    }
 
-    public boolean resetWorld(String world) {
-        File file = verifyFileExists(world, blocksPlacedFile);
-        File file2 = verifyFileExists(world, blocksFoundFile);
-        File file3 = verifyFileExists(world, booksFoundFile);
-        boolean delete1 = file.delete();
-        boolean delete2 = file2.delete();
-        boolean delete3 = file3.delete();
-        return (delete1 && delete2);
+    public boolean resetWorld(String worldName) {
+        boolean a = false, b = false, c = false;
+        try {
+            a = Files.deleteIfExists(Paths.get(ctms.getDataFolder().getAbsolutePath(), worldName, booksFoundFile));
+        } catch (Exception ex) {
+            ctms.getLogger().warning("");
+        }
+        try {
+            b = Files.deleteIfExists(Paths.get(ctms.getDataFolder().getAbsolutePath(), worldName, blocksPlacedFile));
+        } catch (Exception ex) {
+            ctms.getLogger().warning("Unable to delete BlocksPlaced.txt");
+        }
+        try {
+            c = Files.deleteIfExists(Paths.get(ctms.getDataFolder().getAbsolutePath(), worldName, blocksFoundFile));
+        } catch (Exception ex) {
+            ctms.getLogger().warning("Unable to delete BlocksFound.txt");
+        }
+        return (a || b || c);
     }
 
     public boolean deleteWorld(String worldName) {
+        resetWorld(worldName);
         boolean success = false;
         try {
-            Files.deleteIfExists(Paths.get(worldName, booksFoundFile));
+            success = Files.deleteIfExists(Paths.get(ctms.getDataFolder().getAbsolutePath(), worldName));
+            WorldHandler.disableWorld(worldName);
         } catch (Exception ex) {
-            ctms.getLogger().severe("Unable to delete BooksFound.txt");
-        }
-        try {
-            Files.deleteIfExists(Paths.get(worldName, blocksPlacedFile));
-        } catch (Exception ex) {
-            ctms.getLogger().severe("Unable to delete BlocksPlaced.txt");
-        }
-        try {
-            Files.deleteIfExists(Paths.get(worldName, blocksFoundFile));
-        } catch (Exception ex) {
-            ctms.getLogger().severe("Unable to delete BlocksFound.txt");
-        }
-        try {
-            success = Files.deleteIfExists(Paths.get(worldName));
-        } catch (Exception ex) {
-            ctms.getLogger().severe("Unable to delete BooksFound.txt");
+            ctms.getLogger().warning("Unable to delete data for " + worldName);
         }
         return success;
     }
 
-    // TODO what in the actual fuck is this?
-/*    public HashSet<Location> loadVMBlockLocations() {
-        HashSet<Location> locations = new HashSet<Location>();
-        File dir = ctms.getDataFolder();
-        List<World> worlds = ctms.getServer().getWorlds();
-        for (World w : worlds) {
-            System.out.println(w.getName());
-            if (ctms.getConfig().getList(Config.enabledWorlds).contains(w.getName())) {
-                for (String f : dir.list()) {
-                    System.out.println("Dirlist: f");
-                    if (f.equals(w.getName())) {
-                        System.out.println("match!" + f);
-                    }
-                }
-            }
-        }
-        return locations;
-    }*/
 }

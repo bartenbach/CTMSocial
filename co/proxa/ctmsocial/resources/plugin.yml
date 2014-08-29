@@ -8,6 +8,8 @@ commands:
     description: Main Menu
   vm:
     description: Shows blocks on the Victory monument
+  books:
+    description: Shows currently found books
 permissions:
   ctm.*:
     description: Gives access to all CTMSocial commands

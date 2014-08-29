@@ -17,18 +17,18 @@ public class MenuHandler {
 
 
     private static final String prefix = ChatColor.GOLD + "[CTM Social]";
-    private static CTMSocial shs;
+    private static CTMSocial ctms;
     private static FileHandler fh;
 
 
-    public MenuHandler(CTMSocial shs, FileHandler fh) {
-        this.shs = shs;
-        this.fh = fh;
+    public MenuHandler(CTMSocial shs, FileHandler fih) {
+        ctms = shs;
+        fh = fih;
     }
 
     public static void showMenu(CommandSender sender) {
         sender.sendMessage(prefix + ChatColor.GREEN + " [Commands]");
-        sender.sendMessage("    " + ChatColor.RED + "world {enable, disable, reset, list}");
+        sender.sendMessage("    " + ChatColor.RED + "world " + ChatColor.GOLD + "{enable, disable, reset, list, delete}");
         sender.sendMessage("    " + ChatColor.RED + "vm");
     }
 
@@ -37,6 +37,7 @@ public class MenuHandler {
         sender.sendMessage("    " + ChatColor.RED + "world enable [worldname]");
         sender.sendMessage("    " + ChatColor.RED + "world disable [worldname]");
         sender.sendMessage("    " + ChatColor.RED + "world reset [worldname]");
+        sender.sendMessage("    " + ChatColor.RED + "world delete [worldname]");
         sender.sendMessage("    " + ChatColor.RED + "world list");
     }
 
@@ -45,21 +46,21 @@ public class MenuHandler {
             MenuHandler.showWorldMenu(sender);
         } else {
             String arg = args[1];
-            List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
+            List<String> worlds = (List<String>) ctms.getConfig().getList(Config.enabledWorlds);
             if (arg.equalsIgnoreCase("enable")) {
                 if (args.length >= 3) {
-                    String world = StringUtils.getArgs(args);
-                    for (World x : shs.getServer().getWorlds()) {
+                    String world = StringUtils.getArgsOverOne(args);
+                    for (World x : ctms.getServer().getWorlds()) {
                         if (x.getName().equals(world)) {
                             if (worlds.contains(world)) {
                                 sender.sendMessage(ChatColor.RED + world + " is already added as a CTM world!");
                                 return;
                             }
                             worlds.add(x.getName());
-                            shs.getConfig().set(Config.enabledWorlds, worlds);
+                            ctms.getConfig().set(Config.enabledWorlds, worlds);
                             fh.addWorld(x.getName());
                             sender.sendMessage(ChatColor.GREEN + world + " is now enabled as a CTM world");
-                            shs.saveConfig();
+                            ctms.saveConfig();
                             return;
                         }
                     }
@@ -71,10 +72,10 @@ public class MenuHandler {
                 }
             } else if (arg.equalsIgnoreCase("disable")) {
                 if (args.length >= 3) {
-                    String world = StringUtils.getArgs(args);
-                    if (worlds.contains(world)) {
-                        worlds.remove(world);
+                    String worldName = StringUtils.getArgsOverOne(args);
+                    if (WorldHandler.disableWorld(worldName)) {
                         sender.sendMessage(ChatColor.GREEN + args[2] + " has been disabled.");
+                        ctms.reloadConfig();
                     } else {
                         sender.sendMessage(ChatColor.RED + args[2] + " isn't currently enabled as a CTM world.");
                     }
@@ -83,12 +84,12 @@ public class MenuHandler {
                 }
             } else if (arg.equalsIgnoreCase("reset")) {
                 if (args.length >= 3) {
-                    String world = StringUtils.getArgs(args);
+                    String world = StringUtils.getArgsOverOne(args);
                     if (worlds.contains(world)) {
                         if (fh.resetWorld(world)) {
                             sender.sendMessage(ChatColor.GREEN + world + " has been reset.");
                         } else {
-                            sender.sendMessage(ChatColor.RED + StringUtils.getArgs(args) + " could not be reset.");
+                            sender.sendMessage(ChatColor.RED + StringUtils.getArgsOverOne(args) + " could not be reset.");
                         }
                     }
                 } else {
@@ -105,7 +106,7 @@ public class MenuHandler {
                 }
             } else if (arg.equalsIgnoreCase("delete")) {
                 if (args.length >= 3) {
-                    String worldName = StringUtils.getArgs(args);
+                    String worldName = StringUtils.getArgsOverOne(args);
                     if (worlds.contains(worldName)) {
                         sender.sendMessage(ChatColor.DARK_RED + "Deleting data...");
                         if (fh.deleteWorld(worldName)) {
@@ -132,23 +133,23 @@ public class MenuHandler {
 
     public static void handleVMList(Player player) {
         String world = player.getWorld().getName();
-        validateWorld(player, world);
+        printVMList(player, world);
     }
 
     public static void handleVMList(CommandSender sender, String worldName) {
         try {
-            String world = shs.getServer().getWorld(worldName).getName();
-            validateWorld(sender, world);
+            String world = ctms.getServer().getWorld(worldName).getName();
+            printVMList(sender, world);
         } catch (NullPointerException ex) {
             sender.sendMessage(ChatColor.RED + "No data found for world with name: " + ChatColor.GOLD + worldName);
         }
     }
 
-    public static void validateWorld(CommandSender sender, String worldName) {
-        if (shs.isEnabledWorld(worldName)) {
+    public static void printVMList(CommandSender sender, String worldName) {
+        if (WorldHandler.isEnabledWorld(worldName)) {
             sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + worldName + ChatColor.GOLD + "] " +
                     ChatColor.GOLD + "[Victory Monument Status]");
-            ArrayList<String> entries = fh.getBlocksOnVM(worldName);
+            ArrayList<String> entries = fh.getBlockListFromFile(worldName, FileHandler.blocksPlacedFile);
             if (entries != null && entries.size() > 0) {
                 for (String x : entries) {
                     String[] split = x.split(":");
@@ -159,6 +160,34 @@ public class MenuHandler {
                 sender.sendMessage(ChatColor.RED + "No blocks have been placed on the Victory Monument yet.");
             }
         } else {
+            sender.sendMessage(ChatColor.RED + "No data found for world with name: " + ChatColor.GOLD + worldName);
+        }
+    }
+
+    public static void handleBookList(CommandSender sender, String worldName) {
+        printBookList(sender, worldName);
+    }
+
+    public static void handleBookList(Player player) {
+        String worldName = player.getWorld().getName();
+        printBookList(player, worldName);
+    }
+
+    private static void printBookList(CommandSender sender, String worldName) {
+        if (WorldHandler.isEnabledWorld(worldName)) {
+            sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + worldName + ChatColor.GOLD + "] " +
+                    ChatColor.GOLD + "[Books Found]");
+            ArrayList<String> entries = fh.getBlockListFromFile(worldName, FileHandler.booksFoundFile);
+            if (entries != null && entries.size() > 0) {
+                for (String x : entries) {
+                    String[] split = x.split(":");
+                    sender.sendMessage(Format.getBlockColor(split[0]) + split[0] + ChatColor.GRAY + " found by "
+                            + ChatColor.AQUA + ChatColor.ITALIC + split[1]);
+                }
+            } else {
+                sender.sendMessage(ChatColor.RED + "No books have been found yet.");
+            }
+        }else {
             sender.sendMessage(ChatColor.RED + "No data found for world with name " + ChatColor.GOLD + worldName);
         }
     }
