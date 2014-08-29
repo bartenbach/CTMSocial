@@ -1,5 +1,8 @@
-package org.hopto.seed419.ctmsocial.listeners;
+package co.proxa.ctmsocial.listeners;
 
+import co.proxa.ctmsocial.CTMSocial;
+import co.proxa.ctmsocial.file.FileHandler;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,38 +11,15 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.hopto.seed419.CTMSocial;
-import org.hopto.seed419.ctmsocial.file.FileHandler;
+import org.bukkit.inventory.meta.BookMeta;
 
-/**
- * Attribute Only (Public) License
- * Version 0.a3, July 11, 2011
- * <p/>
- * Copyright (C) 2012 Blake Bartenbach <seed419@gmail.com> (@seed419)
- * <p/>
- * Anyone is allowed to copy and distribute verbatim or modified
- * copies of this license document and altering is allowed as long
- * as you attribute the author(s) of this license document / files.
- * <p/>
- * ATTRIBUTE ONLY PUBLIC LICENSE
- * TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
- * <p/>
- * 1. Attribute anyone attached to the license document.
- * Do not remove pre-existing attributes.
- * <p/>
- * Plausible attribution methods:
- * 1. Through comment blocks.
- * 2. Referencing on a site, wiki, or about page.
- * <p/>
- * 2. Do whatever you want as long as you don't invalidate 1.
- *
- * @license AOL v.a3 <http://aol.nexua.org>
- */
 public class BookListener implements Listener {
 
 
     private CTMSocial shs;
     private FileHandler fh;
+    private final String fileName = "/BooksFound.txt";
+    private final String bookGet= ChatColor.GOLD + "[" + ChatColor.YELLOW + "BOOK GET!" + ChatColor.GOLD + "] ";
 
 
     public BookListener(CTMSocial shs, FileHandler fh) {
@@ -59,10 +39,18 @@ public class BookListener implements Listener {
             Inventory i = event.getInventory();
             for (ItemStack item : i) {
                 if (item != null && item.getType() == Material.WRITTEN_BOOK) {
-                    //need to verify the title of the book, which currently isn't possible in bukkit :(
+                    BookMeta bm = (BookMeta) item.getItemMeta();
+                    String bookTitle = bm.getTitle();
+                    broadcastMessage(player, bookTitle);
                 }
             }
 
         }
+    }
+
+    void broadcastMessage(Player player, String title) {
+        shs.getServer().broadcastMessage(bookGet);
+        shs.getServer().broadcastMessage(player.getDisplayName() + ChatColor.GRAY
+                + " found " + ChatColor.DARK_AQUA + title + "!");
     }
 }

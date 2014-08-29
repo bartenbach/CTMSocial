@@ -1,48 +1,27 @@
-package org.hopto.seed419;
+package co.proxa.ctmsocial.handler;
 
+import co.proxa.ctmsocial.CTMSocial;
+import co.proxa.ctmsocial.Format;
+import co.proxa.ctmsocial.file.Config;
+import co.proxa.ctmsocial.file.FileHandler;
+import co.proxa.ctmsocial.util.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.hopto.seed419.ctmsocial.file.Config;
-import org.hopto.seed419.ctmsocial.file.FileHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Attribute Only (Public) License
- * Version 0.a3, July 11, 2011
- * <p/>
- * Copyright (C) 2012 Blake Bartenbach <seed419@gmail.com> (@seed419)
- * <p/>
- * Anyone is allowed to copy and distribute verbatim or modified
- * copies of this license document and altering is allowed as long
- * as you attribute the author(s) of this license document / files.
- * <p/>
- * ATTRIBUTE ONLY PUBLIC LICENSE
- * TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
- * <p/>
- * 1. Attribute anyone attached to the license document.
- * Do not remove pre-existing attributes.
- * <p/>
- * Plausible attribution methods:
- * 1. Through comment blocks.
- * 2. Referencing on a site, wiki, or about page.
- * <p/>
- * 2. Do whatever you want as long as you don't invalidate 1.
- *
- * @license AOL v.a3 <http://aol.nexua.org>
- */
-public class Menu {
+public class MenuHandler {
 
 
     private static final String prefix = ChatColor.GOLD + "[CTM Social]";
-    private CTMSocial shs;
-    private FileHandler fh;
+    private static CTMSocial shs;
+    private static FileHandler fh;
 
 
-    public Menu(CTMSocial shs, FileHandler fh) {
+    public MenuHandler(CTMSocial shs, FileHandler fh) {
         this.shs = shs;
         this.fh = fh;
     }
@@ -61,18 +40,17 @@ public class Menu {
         sender.sendMessage("    " + ChatColor.RED + "world list");
     }
 
-    public void handleWorldMenu(CommandSender sender, String[] args) {
+    public static void handleWorldMenu(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            Menu.showWorldMenu(sender);
+            MenuHandler.showWorldMenu(sender);
         } else {
             String arg = args[1];
-
+            List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
             if (arg.equalsIgnoreCase("enable")) {
                 if (args.length >= 3) {
-                    String world = getArgs(args);
+                    String world = StringUtils.getArgs(args);
                     for (World x : shs.getServer().getWorlds()) {
                         if (x.getName().equals(world)) {
-                            List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
                             if (worlds.contains(world)) {
                                 sender.sendMessage(ChatColor.RED + world + " is already added as a CTM world!");
                                 return;
@@ -85,18 +63,17 @@ public class Menu {
                             return;
                         }
                     }
-                    sender.sendMessage(Menu.getPrefix());
+                    sender.sendMessage(MenuHandler.getPrefix());
                     sender.sendMessage(ChatColor.RED + world + " is not a loaded world");
                     sender.sendMessage(ChatColor.RED + "World names are case sensitive!");
-                    return;
                 } else {
                     sender.sendMessage(ChatColor.RED + "Please supply a world name");
                 }
             } else if (arg.equalsIgnoreCase("disable")) {
                 if (args.length >= 3) {
-                    List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
-                    if (worlds.contains(getArgs(args))) {
-                        worlds.remove(args[2]);
+                    String world = StringUtils.getArgs(args);
+                    if (worlds.contains(world)) {
+                        worlds.remove(world);
                         sender.sendMessage(ChatColor.GREEN + args[2] + " has been disabled.");
                     } else {
                         sender.sendMessage(ChatColor.RED + args[2] + " isn't currently enabled as a CTM world.");
@@ -106,36 +83,45 @@ public class Menu {
                 }
             } else if (arg.equalsIgnoreCase("reset")) {
                 if (args.length >= 3) {
-                   List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
-                    if (worlds.contains(getArgs(args))) {
-                        if (fh.resetWorld(getArgs(args))) {
-                            final CommandSender senderf = sender;
-                            final String theargs = getArgs(args);
-                            sender.sendMessage(ChatColor.DARK_RED + "Resetting wool found in chests...");
-                            sender.sendMessage(ChatColor.DARK_RED + "Resetting Victory Monument...");
-                            shs.getServer().getScheduler().scheduleAsyncDelayedTask(shs, new Runnable() {
-                                @Override
-                                public void run() {
-                                    senderf.sendMessage(ChatColor.GREEN + theargs + " has been reset.");
-                                }
-                            }, 20L);
+                    String world = StringUtils.getArgs(args);
+                    if (worlds.contains(world)) {
+                        if (fh.resetWorld(world)) {
+                            sender.sendMessage(ChatColor.GREEN + world + " has been reset.");
                         } else {
-                            sender.sendMessage(ChatColor.RED + getArgs(args) + " could not be reset.");
+                            sender.sendMessage(ChatColor.RED + StringUtils.getArgs(args) + " could not be reset.");
                         }
                     }
                 } else {
                     sender.sendMessage(ChatColor.RED + "Please supply a world name");
                 }
             } else if (arg.equalsIgnoreCase("list")) {
-                List<String> worlds = (List<String>) shs.getConfig().getList(Config.enabledWorlds);
                 if (worlds.isEmpty()) {
                     sender.sendMessage(ChatColor.RED + "There currently aren't any enabled CTM worlds.");
                 } else {
-                    sender.sendMessage(Menu.getPrefix() + ChatColor.GREEN + " [Enabled Worlds]");
+                    sender.sendMessage(MenuHandler.getPrefix() + ChatColor.GREEN + " [Enabled Worlds]");
                     for (String x : worlds) {
                         sender.sendMessage(x);
                     }
                 }
+            } else if (arg.equalsIgnoreCase("delete")) {
+                if (args.length >= 3) {
+                    String worldName = StringUtils.getArgs(args);
+                    if (worlds.contains(worldName)) {
+                        sender.sendMessage(ChatColor.DARK_RED + "Deleting data...");
+                        if (fh.deleteWorld(worldName)) {
+                            sender.sendMessage(ChatColor.GREEN + worldName + " has been deleted.");
+                        } else {
+                            sender.sendMessage(ChatColor.GOLD + worldName + ChatColor.RED + " could not be deleted.");
+                        }
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "World " + worldName + " not found.");
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Please supply a world name");
+                }
+            }else {
+                sender.sendMessage(ChatColor.RED + "Unrecognized argument.  See " + ChatColor.GOLD + "/ctm "
+                        + ChatColor.RED + "for help");
             }
         }
     }
@@ -144,33 +130,36 @@ public class Menu {
         return prefix;
     }
 
-    public void handleVMList(Player player) {
+    public static void handleVMList(Player player) {
         String world = player.getWorld().getName();
-        if (shs.isEnabledWorld(world)) {
-            player.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + world + ChatColor.GOLD + "] " +
-                    ChatColor.GOLD + "[Victory Monument Status]");
-            ArrayList<String> entries = fh.getBlocksOnVM(world);
-            if (entries != null && entries.size() > 0) {
-                for (String x : entries) {
-                    String[] split = x.split(":");
-                    player.sendMessage(Format.getBlockColor(split[0]) + split[0] + ChatColor.GRAY + " found by "
-                            + ChatColor.AQUA + ChatColor.ITALIC + split[1]);
-                }
-            } else {
-                player.sendMessage(ChatColor.RED + "No blocks have been placed on the Victory Monument yet.");
-            }
+        validateWorld(player, world);
+    }
+
+    public static void handleVMList(CommandSender sender, String worldName) {
+        try {
+            String world = shs.getServer().getWorld(worldName).getName();
+            validateWorld(sender, world);
+        } catch (NullPointerException ex) {
+            sender.sendMessage(ChatColor.RED + "No data found for world with name: " + ChatColor.GOLD + worldName);
         }
     }
 
-    public String getArgs(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        args[0] = "$";
-        args[1] = "$";
-        for (String x : args) {
-            if (!x.equals("$")) {
-                sb.append(x).append(" ");
+    public static void validateWorld(CommandSender sender, String worldName) {
+        if (shs.isEnabledWorld(worldName)) {
+            sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + worldName + ChatColor.GOLD + "] " +
+                    ChatColor.GOLD + "[Victory Monument Status]");
+            ArrayList<String> entries = fh.getBlocksOnVM(worldName);
+            if (entries != null && entries.size() > 0) {
+                for (String x : entries) {
+                    String[] split = x.split(":");
+                    sender.sendMessage(Format.getBlockColor(split[0]) + split[0] + ChatColor.GRAY + " found by "
+                            + ChatColor.AQUA + ChatColor.ITALIC + split[1]);
+                }
+            } else {
+                sender.sendMessage(ChatColor.RED + "No blocks have been placed on the Victory Monument yet.");
             }
+        } else {
+            sender.sendMessage(ChatColor.RED + "No data found for world with name " + ChatColor.GOLD + worldName);
         }
-        return sb.toString().trim();
     }
 }

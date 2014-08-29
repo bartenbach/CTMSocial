@@ -1,7 +1,7 @@
 name: CTMSocial
-main: org.hopto.seed419.CTMSocial
-author: seed419
-version: 0.0.1
+main: co.proxa.ctmsocial.CTMSocial
+author: proxa
+version: 0.0.2
 description: Makes CTM games more social
 commands:
   ctm:

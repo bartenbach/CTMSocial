@@ -1,45 +1,20 @@
-package org.hopto.seed419.ctmsocial.file;
+package co.proxa.ctmsocial.file;
 
-import org.bukkit.Location;
-import org.bukkit.World;
+import co.proxa.ctmsocial.CTMSocial;
 import org.bukkit.block.Block;
-import org.hopto.seed419.CTMSocial;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
-/**
- * Attribute Only (Public) License
- * Version 0.a3, July 11, 2011
- * <p/>
- * Copyright (C) 2012 Blake Bartenbach <seed419@gmail.com> (@seed419)
- * <p/>
- * Anyone is allowed to copy and distribute verbatim or modified
- * copies of this license document and altering is allowed as long
- * as you attribute the author(s) of this license document / files.
- * <p/>
- * ATTRIBUTE ONLY PUBLIC LICENSE
- * TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
- * <p/>
- * 1. Attribute anyone attached to the license document.
- * Do not remove pre-existing attributes.
- * <p/>
- * Plausible attribution methods:
- * 1. Through comment blocks.
- * 2. Referencing on a site, wiki, or about page.
- * <p/>
- * 2. Do whatever you want as long as you don't invalidate 1.
- *
- * @license AOL v.a3 <http://aol.nexua.org>
- */
 public class FileHandler {
 
 
     private CTMSocial ctms;
-    private File woolsFound;
-    private File woolsPlaced;
+    private final String blocksFoundFile = "/BlocksFound.txt";
+    private final String blocksPlacedFile = "/BlocksPlaced.txt";
+    private final String booksFoundFile = "/BooksFound.txt";
 
 
     public FileHandler(CTMSocial ctms)  {
@@ -55,24 +30,40 @@ public class FileHandler {
         ctms.saveConfig();
     }
 
-    public void addWorld(String name) {
-        File worldDir = new File(ctms.getDataFolder() + "/" + name);
+    // TODO no delete world?
+    // TODO book file management
+
+    public void addWorld(String worldName) {
+        File worldDir = new File(ctms.getDataFolder() + "/" + worldName);
         if (!worldDir.exists()) {
             worldDir.mkdirs();
+        } else {
+            // world already exists...
         }
-        woolsFound = new File(worldDir + "/BlocksFound.txt");
-        woolsPlaced = new File(worldDir + "/BlocksPlaced.txt");
-        if (!woolsFound.exists()) {
+        File blocksFound = new File(worldDir + blocksFoundFile);
+        File blocksPlaced = new File(worldDir + blocksFoundFile);
+        File booksFound = new File(worldDir + booksFoundFile);
+        if (!blocksFound.exists()) {
             try {
-                woolsFound.createNewFile();
+                blocksFound.createNewFile();
             } catch (IOException e) {
+                ctms.getLogger().severe("Unable to create BlocksFound.txt");
                 e.printStackTrace();
             }
         }
-        if (!woolsPlaced.exists()) {
+        if (!blocksPlaced.exists()) {
             try {
-                woolsPlaced.createNewFile();
+                blocksPlaced.createNewFile();
             } catch (IOException e) {
+                ctms.getLogger().severe("Unable to create BlocksPlaced.txt");
+                e.printStackTrace();
+            }
+        }
+        if (!booksFound.exists()) {
+            try {
+                booksFound.createNewFile();
+            } catch (IOException e) {
+                ctms.getLogger().severe("Unable to create BooksFound.txt");
                 e.printStackTrace();
             }
         }
@@ -80,7 +71,12 @@ public class FileHandler {
 
     public void verifyDirectoryExists() {
         if (!ctms.getDataFolder().exists()) {
-            ctms.getDataFolder().mkdirs();
+            boolean success = ctms.getDataFolder().mkdirs();
+            if (success) {
+                ctms.getLogger().info("Created new CTMSocial directory.");
+            } else {
+                ctms.getLogger().severe("Unable to create CTMSocial directory.");
+            }
         }
     }
 
@@ -142,7 +138,7 @@ public class FileHandler {
     }
 
    public ArrayList<String> getBlocksOnVM(String world) {
-       File file = verifyFileExists(world, "/BlocksPlaced.txt");
+       File file = verifyFileExists(world, blocksPlacedFile);
        ArrayList<String> entries = new ArrayList<String>();
        try {
            BufferedReader br = new BufferedReader(new FileReader(file));
@@ -158,14 +154,42 @@ public class FileHandler {
    }
 
     public boolean resetWorld(String world) {
-        File file = verifyFileExists(world, "/BlocksPlaced.txt");
-        File file2 = verifyFileExists(world, "/BlocksFound.txt");
+        File file = verifyFileExists(world, blocksPlacedFile);
+        File file2 = verifyFileExists(world, blocksFoundFile);
+        File file3 = verifyFileExists(world, booksFoundFile);
         boolean delete1 = file.delete();
         boolean delete2 = file2.delete();
+        boolean delete3 = file3.delete();
         return (delete1 && delete2);
     }
 
-    public HashSet<Location> loadVMBlockLocations() {
+    public boolean deleteWorld(String worldName) {
+        boolean success = false;
+        try {
+            Files.deleteIfExists(Paths.get(worldName, booksFoundFile));
+        } catch (Exception ex) {
+            ctms.getLogger().severe("Unable to delete BooksFound.txt");
+        }
+        try {
+            Files.deleteIfExists(Paths.get(worldName, blocksPlacedFile));
+        } catch (Exception ex) {
+            ctms.getLogger().severe("Unable to delete BlocksPlaced.txt");
+        }
+        try {
+            Files.deleteIfExists(Paths.get(worldName, blocksFoundFile));
+        } catch (Exception ex) {
+            ctms.getLogger().severe("Unable to delete BlocksFound.txt");
+        }
+        try {
+            success = Files.deleteIfExists(Paths.get(worldName));
+        } catch (Exception ex) {
+            ctms.getLogger().severe("Unable to delete BooksFound.txt");
+        }
+        return success;
+    }
+
+    // TODO what in the actual fuck is this?
+/*    public HashSet<Location> loadVMBlockLocations() {
         HashSet<Location> locations = new HashSet<Location>();
         File dir = ctms.getDataFolder();
         List<World> worlds = ctms.getServer().getWorlds();
@@ -181,5 +205,5 @@ public class FileHandler {
             }
         }
         return locations;
-    }
+    }*/
 }

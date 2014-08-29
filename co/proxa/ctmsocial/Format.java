@@ -1,4 +1,4 @@
-package org.hopto.seed419;
+package co.proxa.ctmsocial;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * Attribute Only (Public) License
  * Version 0.a3, July 11, 2011
  * <p/>
- * Copyright (C) 2012 Blake Bartenbach <seed419@gmail.com> (@seed419)
+ * Copyright (C) 2012 Blake Bartenbach <proxa@gmail.com> (@proxa)
  * <p/>
  * Anyone is allowed to copy and distribute verbatim or modified
  * copies of this license document and altering is allowed as long
