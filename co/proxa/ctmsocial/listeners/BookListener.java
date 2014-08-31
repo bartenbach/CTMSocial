@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.material.Chest;
 
 public class BookListener implements Listener {
 
@@ -43,13 +44,15 @@ public class BookListener implements Listener {
             for (ItemStack item : i) {
                 if (item != null && item.getType() == Material.WRITTEN_BOOK
                         && event.getInventory().getType() == InventoryType.CHEST) {
-                    BlockState chest = (BlockState) event.getInventory().getHolder();
-                    if (chest.getBlock().getRelative(BlockFace.UP).getType() == Material.WALL_SIGN) {
-                        BookMeta bm = (BookMeta) item.getItemMeta();
-                        String bookTitle = bm.getTitle();
-                        if (!fh.blockAlreadyInFile(fileName, player.getWorld().getName(), bookTitle, event.getPlayer().getName())) {
-                            broadcastMessage(player, bookTitle);
-                            fh.appendBlockFindToFile(fileName, player.getWorld().getName(), bookTitle, player.getName());
+                    if (event.getInventory().getHolder() instanceof Chest) {
+                        BlockState chest = (BlockState) event.getInventory().getHolder();
+                        if (chest.getBlock().getRelative(BlockFace.UP).getType() == Material.WALL_SIGN) {
+                            BookMeta bm = (BookMeta) item.getItemMeta();
+                            String bookTitle = bm.getTitle();
+                            if (!fh.blockAlreadyInFile(fileName, player.getWorld().getName(), bookTitle, event.getPlayer().getName())) {
+                                broadcastMessage(player, bookTitle);
+                                fh.appendBlockFindToFile(fileName, player.getWorld().getName(), bookTitle, player.getName());
+                            }
                         }
                     }
                 }
